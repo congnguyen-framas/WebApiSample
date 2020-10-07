@@ -68,10 +68,15 @@ namespace WebApiSample.Controllers
             var key = Convert.ToInt32(form.Get("key"));
             var values = form.Get("values");
 
-            var printType = JsonConvert.DeserializeObject<PrintTypeModel>(values);
-            printType.PrintTypeId = key;
+            PrintTypeModel printTypeId = DbPrintType.Instance.GetId(key);
 
-            int result = DbPrintType.Instance.UpdateDb(printType);
+            if (printTypeId != null)
+            {
+                JsonConvert.PopulateObject(values, printTypeId);
+                Validate(printTypeId);
+            }
+
+            int result = DbPrintType.Instance.UpdateDb(printTypeId);
 
             return Ok(result);
         }

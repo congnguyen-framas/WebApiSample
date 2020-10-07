@@ -100,10 +100,18 @@ namespace WebApiSample.Controllers
             var values = form.Get("values");
             //Kiem tra key tren database co ton tai hay khong
 
-            var brand = JsonConvert.DeserializeObject<BrandModel>(values);
-            brand.BrandId = key;
+            BrandModel brandById = DbBrand.Instance.GetId(key);
 
-            int result = DbBrand.Instance.UpdateDb(brand);
+            if (brandById!=null)
+            {
+                JsonConvert.PopulateObject(values, brandById);
+                Validate(brandById);
+            }
+
+            //var brand = JsonConvert.DeserializeObject<BrandModel>(values);
+            //brand.BrandId = key;
+
+            int result = DbBrand.Instance.UpdateDb(brandById);
 
             return Ok(result);//trả về kết quả 1 là update thành công
         }
